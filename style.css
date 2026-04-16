@@ -61,6 +61,8 @@ body {
   font-weight: 600;
   color: #e8f5ee;
   letter-spacing: -0.02em;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
 
 .subtitle {
@@ -513,6 +515,7 @@ body {
   white-space: nowrap;
   transition: background 0.15s, border-color 0.15s;
   flex-shrink: 0;
+  margin-top: 60px;
 }
 .icon-btn:hover { background: #1e3d2b; border-color: #2d6644; }
 
