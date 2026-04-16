@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teleprompter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- SCREEN 1: Script editor -->
+  <div id="editor-screen" class="screen active">
+    <div class="editor-inner">
+
+      <div class="editor-header">
+        <div>
+          <h1>Teleprompter</h1>
+          <p class="subtitle">Paste your script, choose your settings, then hit Start.</p>
+        </div>
+        <button id="saved-scripts-btn" class="icon-btn" title="Saved scripts">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="14" height="14" rx="2"/>
+            <line x1="5" y1="6" x2="13" y2="6"/>
+            <line x1="5" y1="9" x2="13" y2="9"/>
+            <line x1="5" y1="12" x2="9" y2="12"/>
+          </svg>
+          Saved scripts
+        </button>
+      </div>
+
+      <textarea id="script-input" placeholder="Paste or type your script here..."></textarea>
+
+      <!-- Save script row -->
+      <div class="save-row">
+        <input type="text" id="script-name-input" placeholder="Script name (optional)" maxlength="60">
+        <button id="save-script-btn">Save script</button>
+      </div>
+
+      <div class="settings-grid">
+
+        <div class="setting-group">
+          <label for="quality-select">Video quality</label>
+          <select id="quality-select">
+            <option value="480p">480p</option>
+            <option value="720p" selected>720p (recommended)</option>
+            <option value="1080p">1080p</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <label for="speed-slider">
+            Scroll speed
+            <span class="setting-val" id="speed-val">3</span>
+          </label>
+          <input type="range" id="speed-slider" min="1" max="10" value="3" step="1">
+        </div>
+
+        <div class="setting-group">
+          <label for="font-slider">
+            Font size
+            <span class="setting-val" id="font-val">40px</span>
+          </label>
+          <input type="range" id="font-slider" min="24" max="80" value="40" step="1">
+        </div>
+
+        <div class="setting-group">
+          <label for="opacity-init-slider">
+            Text opacity
+            <span class="setting-val" id="opacity-init-val">80%</span>
+          </label>
+          <input type="range" id="opacity-init-slider" min="20" max="100" value="80" step="1">
+        </div>
+
+      </div>
+
+      <button id="start-btn">Start Teleprompter</button>
+    </div>
+  </div>
+
+  <!-- SAVED SCRIPTS PANEL (slides in over editor) -->
+  <div id="scripts-panel" class="panel">
+    <div class="panel-header">
+      <h2>Saved scripts</h2>
+      <button id="close-panel-btn" class="icon-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="3" y1="3" x2="13" y2="13"/>
+          <line x1="13" y1="3" x2="3" y2="13"/>
+        </svg>
+      </button>
+    </div>
+    <div id="scripts-list">
+      <!-- populated by JS -->
+    </div>
+    <p id="scripts-empty">No saved scripts yet. Write a script and hit "Save script".</p>
+  </div>
+
+  <!-- Panel backdrop -->
+  <div id="panel-backdrop"></div>
+
+  <!-- SCREEN 2: Teleprompter display with camera -->
+  <div id="display-screen" class="screen">
+
+    <div id="progress-bar-wrap">
+      <div id="progress-bar"></div>
+    </div>
+
+    <div id="camera-view">
+      <video id="camera-feed" autoplay muted playsinline></video>
+      <div id="scroll-container">
+        <div id="scroll-content"></div>
+      </div>
+      <div id="rec-badge">
+        <span id="rec-dot"></span>
+        <span id="rec-timer">REC 00:00</span>
+      </div>
+    </div>
+
+    <div id="controls">
+      <button id="play-pause-btn">Pause</button>
+      <button id="reset-btn">Reset</button>
+      <button id="stop-rec-btn">Stop recording</button>
+      <button id="edit-btn">Edit script</button>
+      <div class="divider"></div>
+      <label class="ctrl-label">
+        Speed
+        <input type="range" id="live-speed" min="1" max="10" value="3" step="1">
+        <span id="speed-readout">3</span>
+      </label>
+      <label class="ctrl-label">
+        Opacity
+        <input type="range" id="opacity-slider" min="20" max="100" value="80" step="1">
+        <span id="opacity-readout">80%</span>
+      </label>
+       <label class="ctrl-label">
+        Font Size
+        <input type="range" id="font-live-slider" min="20" max="100" value="40" step="1">
+        <span id="font-live-readout">40px</span>
+      </label>
+      <div class="ctrl-label">
+        Voice
+      <button id="voice-toggle-btn"> OFF</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCREEN 3: Playback & download -->
+  <div id="playback-screen" class="screen">
+    <div id="playback-inner">
+      <div id="playback-header">
+        <h2>Your recording</h2>
+        <p>Watch your take before saving. If it looks good, download it.</p>
+      </div>
+      <video id="playback-video" controls playsinline></video>
+      <div id="playback-meta">
+        <span id="playback-quality-badge"></span>
+        <span id="playback-duration"></span>
+      </div>
+      <div id="playback-actions">
+        <button id="download-btn">Download video</button>
+        <button id="record-again-btn">Record again</button>
+        <button id="discard-btn">Discard take</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
